@@ -1,26 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
+
+interface PeerData {
+  timestamp: number;
+  message: string;
+  username: string;
+}
 
 function App() {
   const [peerId, setPeerId] = useState("");
   const [inputId, setInputId] = useState("");
-  const [messages, setMessages] = useState(["dummy message"]);
-  const peer = new Peer();
+  const [messages, setMessages] = useState<PeerData[]>([]);
+  const [message, setMessage] = useState<string>();
+
+  const [peer, setPeer] = useState<Peer>();
+  const [connection, setConnection] = useState<DataConnection>();
 
   useEffect(() => {
-    peer.on("open", (id) => {
-      console.log("My peer ID is: " + id);
+    const newPeer = new Peer();
+    setPeer(newPeer);
+    newPeer.on("open", (id) => {
       setPeerId(id);
+      console.log("Peer ID:", peerId);
     });
-    peer.on("connection", (conn) => {
+    newPeer.on("connection", (conn) => {
+      // setConnection(conn);
       conn.on("data", (data) => {
-        console.log(data);
-        setMessages((messages) => [...messages, data] as string[]);
-      });
-      conn.on("open", () => {
-        conn.send("hello!");
+        setMessages((messages) => [...messages, data] as PeerData[]);
       });
     });
   }, []);
@@ -37,17 +45,43 @@ function App() {
       />
       <button
         onClick={() => {
-          const conn = peer.connect(inputId);
-          conn.on("open", () => {
-            conn.send("hi!");
-          });
+          const conn = peer?.connect(inputId);
+          setConnection(conn);
+
+          console.log("hit connect", connection);
         }}
       >
         Connect
       </button>
+      <textarea
+        value={message}
+        onChange={(e) => {
+          setMessage(e.target.value);
+        }}
+      />
+      <button
+        onClick={() => {
+          console.log(connection);
+          if (!connection) return;
+          connection.send({
+            timestamp: Date.now(),
+            username: "username",
+            message: message,
+          });
+          connection.on("data", (data) => {
+            console.log(data);
+          });
+        }}
+      >
+        Send
+      </button>
+
       <ul>
         {messages.map((message, i) => (
-          <li key={i}>{message}</li>
+          <li key={i}>
+            [{new Date(message.timestamp).toString()}] {message.username}:{" "}
+            {message.message}
+          </li>
         ))}
       </ul>
     </div>
