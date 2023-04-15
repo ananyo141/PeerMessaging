@@ -1,91 +1,53 @@
-"use client";
+import React from "react";
 
-import { useEffect, useState } from "react";
-import Peer, { DataConnection } from "peerjs";
-
-interface PeerData {
-  timestamp: number;
-  message: string;
-  username: string;
-}
-
-function App() {
-  const [peerId, setPeerId] = useState("");
-  const [inputId, setInputId] = useState("");
-  const [messages, setMessages] = useState<PeerData[]>([]);
-  const [message, setMessage] = useState<string>();
-
-  const [peer, setPeer] = useState<Peer>();
-  const [connection, setConnection] = useState<DataConnection>();
-
-  useEffect(() => {
-    const newPeer = new Peer();
-    setPeer(newPeer);
-    newPeer.on("open", (id) => {
-      setPeerId(id);
-      console.log("Peer ID:", peerId);
-    });
-    newPeer.on("connection", (conn) => {
-      // setConnection(conn);
-      conn.on("data", (data) => {
-        setMessages((messages) => [...messages, data] as PeerData[]);
-      });
-    });
-  }, []);
-
+export default async function App() {
   return (
-    <div className="App">
-      <h1>Peer ID: {peerId}</h1>
-      <h2>Messages</h2>
-      <input
-        type="text"
-        onChange={(e) => {
-          setInputId(e.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          const conn = peer?.connect(inputId);
-          setConnection(conn);
-
-          console.log("hit connect", connection);
-        }}
-      >
-        Connect
-      </button>
-      <textarea
-        value={message}
-        onChange={(e) => {
-          setMessage(e.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          console.log(connection);
-          if (!connection) return;
-          connection.send({
-            timestamp: Date.now(),
-            username: "username",
-            message: message,
-          });
-          connection.on("data", (data) => {
-            console.log(data);
-          });
-        }}
-      >
-        Send
-      </button>
-
-      <ul>
-        {messages.map((message, i) => (
-          <li key={i}>
-            [{new Date(message.timestamp).toString()}] {message.username}:{" "}
-            {message.message}
-          </li>
-        ))}
-      </ul>
+    <div className="hero min-h-screen bg-base-200">
+      <div className="container flex flex-col items-center">
+      <div className="hero-content lg:gap-20 flex-col lg:flex-row-reverse">
+        <div className="text-center lg:text-left">
+          <h1 className="text-5xl font-bold">Login now!</h1>
+          <p className="py-6 max-w-md">
+            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
+            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
+            a id nisi.
+          </p>
+        </div>
+        <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+          <div className="card-body">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="text"
+                placeholder="email"
+                className="input input-bordered"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="text"
+                placeholder="password"
+                className="input input-bordered"
+              />
+              <label className="label">
+                <a href="#" className="label-text-alt link link-hover">
+                  Forgot password?
+                </a>
+              </label>
+            </div>
+            <div className="form-control mt-6">
+              <button className="btn btn-primary">Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
     </div>
   );
 }
 
-export default App;
