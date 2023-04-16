@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import { Link } from "@chakra-ui/next-js";
 
-import { useAppSelector, useAppDispatch } from "@src/state";
-import { setUserId } from "@src/state";
+import { useAppSelector, useAppDispatch, userActions } from "@src/state";
 
 export default function App() {
   const { userId } = useAppSelector((state) => state.user);
@@ -48,7 +47,7 @@ export default function App() {
                   href={{ pathname: "/connect" }}
                   className="btn btn-primary"
                   onClick={() => {
-                    dispatch(setUserId(userIdInput ?? ""));
+                    dispatch(userActions.setUserId(userIdInput ?? ""));
                   }}
                 >
                   Next

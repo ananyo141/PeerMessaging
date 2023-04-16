@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Peer, { DataConnection } from "peerjs";
 import Avatar from "avataaars";
 
-import { useAppSelector, useAppDispatch, userActions } from "@src/state";
+import { useAppSelector, useAppDispatch } from "@src/state";
 import { generateRandomAvatarOptions } from "@src/utils/randomAvatars";
 
 interface PeerData {
@@ -17,7 +17,6 @@ type Props = {};
 
 const Connect = (props: Props) => {
   const { userId } = useAppSelector((state) => state.user);
-  console.log(userId);
 
   const [peerId, setPeerId] = useState("");
   const [inputId, setInputId] = useState("");
