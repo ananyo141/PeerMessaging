@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Link } from "@chakra-ui/next-js";
 
 import { useAppSelector, useAppDispatch, userActions } from "@src/state";
+import { generateRandomAvatarOptions } from "@src/utils/randomAvatars";
 
 export default function App() {
   const { userId } = useAppSelector((state) => state.user);
@@ -13,6 +14,7 @@ export default function App() {
 
   React.useEffect(() => {
     setUserIdInput(userId);
+    dispatch(userActions.setAvatarOptions(generateRandomAvatarOptions()));
   }, [userId]);
 
   return (

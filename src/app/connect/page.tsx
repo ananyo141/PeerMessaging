@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Peer, { DataConnection } from "peerjs";
-import Avatar from "avataaars";
 
 import { useAppSelector, useAppDispatch } from "@src/state";
-import { generateRandomAvatarOptions } from "@src/utils/randomAvatars";
 
 interface PeerData {
   timestamp: number;
@@ -16,41 +13,35 @@ interface PeerData {
 type Props = {};
 
 const Connect = (props: Props) => {
-  const { userId } = useAppSelector((state) => state.user);
-
   const [peerId, setPeerId] = useState("");
   const [inputId, setInputId] = useState("");
   const [messages, setMessages] = useState<PeerData[]>([]);
   const [message, setMessage] = useState<string>();
 
-  const [peer, setPeer] = useState<Peer>();
-  const [connection, setConnection] = useState<DataConnection>();
-  const [avatarOptions, setAvatarOptions] = useState(
-    generateRandomAvatarOptions()
-  );
+  const [peer, setPeer] = useState<any>();
+  const [connection, setConnection] = useState<any>();
 
   useEffect(() => {
-    const newPeer = new Peer();
-    setPeer(newPeer);
-    newPeer.on("open", (id) => {
-      setPeerId(id);
-      console.log("Peer ID:", peerId);
-    });
-    newPeer.on("connection", (conn) => {
-      // setConnection(conn);
-      conn.on("data", (data) => {
-        setMessages((messages) => [...messages, data] as PeerData[]);
+    const EffectCallback = async () => {
+      const Peer = (await import("peerjs")).default;
+      const newPeer = new Peer();
+      setPeer(newPeer);
+      newPeer.on("open", (id) => {
+        setPeerId(id);
+        console.log("Peer ID:", peerId);
       });
-    });
+      newPeer.on("connection", (conn) => {
+        // setConnection(conn);
+        conn.on("data", (data) => {
+          setMessages((messages) => [...messages, data] as PeerData[]);
+        });
+      });
+    };
+    EffectCallback();
   }, []);
 
   return (
     <div className="App">
-      <Avatar
-        style={{ width: "100px", height: "100px" }}
-        avatarStyle="Circle"
-        {...avatarOptions}
-      />
       <h1>Peer ID: {peerId}</h1>
       <h2>Messages</h2>
       <input

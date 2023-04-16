@@ -1,7 +1,4 @@
-"use client";
 // https://www.tjvantoll.com/2021/05/14/randomized-avatars/
-
-
 const configs: { [key: string]: string[] } = {
   topType: [
     "NoHair",
