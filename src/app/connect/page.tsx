@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Peer, { DataConnection } from "peerjs";
-
 import Avatar from "avataaars";
+
 import { generateRandomAvatarOptions } from "@src/utils/randomAvatars";
 interface PeerData {
   timestamp: number;
@@ -57,8 +57,6 @@ const Connect = (props: Props) => {
         onClick={() => {
           const conn = peer?.connect(inputId);
           setConnection(conn);
-
-          console.log("hit connect", connection);
         }}
       >
         Connect
@@ -71,15 +69,11 @@ const Connect = (props: Props) => {
       />
       <button
         onClick={() => {
-          console.log(connection);
           if (!connection) return;
           connection.send({
             timestamp: Date.now(),
             username: "username",
             message: message,
-          });
-          connection.on("data", (data) => {
-            console.log(data);
           });
         }}
       >
