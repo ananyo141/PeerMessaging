@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Peer, { DataConnection } from "peerjs";
 import Avatar from "avataaars";
 
+import { useAppSelector, useAppDispatch, userActions } from "@src/state";
 import { generateRandomAvatarOptions } from "@src/utils/randomAvatars";
+
 interface PeerData {
   timestamp: number;
   message: string;
@@ -14,6 +16,9 @@ interface PeerData {
 type Props = {};
 
 const Connect = (props: Props) => {
+  const { userId } = useAppSelector((state) => state.user);
+  console.log(userId);
+
   const [peerId, setPeerId] = useState("");
   const [inputId, setInputId] = useState("");
   const [messages, setMessages] = useState<PeerData[]>([]);
@@ -21,7 +26,9 @@ const Connect = (props: Props) => {
 
   const [peer, setPeer] = useState<Peer>();
   const [connection, setConnection] = useState<DataConnection>();
-	const [avatarOptions, setAvatarOptions] = useState(generateRandomAvatarOptions());
+  const [avatarOptions, setAvatarOptions] = useState(
+    generateRandomAvatarOptions()
+  );
 
   useEffect(() => {
     const newPeer = new Peer();

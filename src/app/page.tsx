@@ -3,8 +3,18 @@
 import React, { useState } from "react";
 import { Link } from "@chakra-ui/next-js";
 
-export default async function App() {
-  const [userId, setUserId] = useState<string>();
+import { useAppSelector, useAppDispatch } from "@src/state";
+import { setUserId } from "@src/state";
+
+export default function App() {
+  const { userId } = useAppSelector((state) => state.user);
+  const [userIdInput, setUserIdInput] = useState(userId);
+
+  const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    setUserIdInput(userId);
+  }, [userId]);
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -26,17 +36,20 @@ export default async function App() {
                 <input
                   type="text"
                   placeholder="userid"
-                  value={userId}
+                  value={userIdInput ?? ""}
                   onChange={(e) => {
-                    setUserId(e.target.value);
+                    setUserIdInput(e.target.value);
                   }}
                   className="input input-bordered"
                 />
               </div>
               <div className="form-control mt-6">
                 <Link
-                  href={{ pathname: "/connect", query: { userId } }}
+                  href={{ pathname: "/connect" }}
                   className="btn btn-primary"
+                  onClick={() => {
+                    dispatch(setUserId(userIdInput ?? ""));
+                  }}
                 >
                   Next
                 </Link>
