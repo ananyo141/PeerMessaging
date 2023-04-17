@@ -13,7 +13,9 @@ interface PeerData {
 type Props = {};
 
 const Connect = (props: Props) => {
-  const [peerId, setPeerId] = useState("");
+  const statePeerId = useAppSelector((state) => state.user.userId);
+  const [peerId, setPeerId] = useState<string>("");
+
   const [inputId, setInputId] = useState("");
   const [messages, setMessages] = useState<PeerData[]>([]);
   const [message, setMessage] = useState<string>();
@@ -22,23 +24,22 @@ const Connect = (props: Props) => {
   const [connection, setConnection] = useState<any>();
 
   useEffect(() => {
-    const EffectCallback = async () => {
+    const asyncCallback = async () => {
+      setPeerId(statePeerId ?? Math.random().toString(36).substring(2, 15));
       const Peer = (await import("peerjs")).default;
-      const newPeer = new Peer();
+      const newPeer = new Peer(peerId);
       setPeer(newPeer);
       newPeer.on("open", (id) => {
-        setPeerId(id);
         console.log("Peer ID:", peerId);
       });
       newPeer.on("connection", (conn) => {
-        // setConnection(conn);
         conn.on("data", (data) => {
           setMessages((messages) => [...messages, data] as PeerData[]);
         });
       });
     };
-    EffectCallback();
-  }, []);
+    asyncCallback();
+  }, [statePeerId]);
 
   return (
     <div className="App">
