@@ -10,3 +10,4 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export type { AppDispatch, RootState };
 
 export * as userActions from "./features/user/userSlice";
+export * as chatActions from "./features/chat/chatSlice";
