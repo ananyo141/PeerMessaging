@@ -4,8 +4,13 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 
+import { useAppSelector } from "@src/state";
+import generatePeerId from "@src/utils/generatePeerId";
+
 function VideoCall() {
-  const [peerId, setPeerId] = useState("");
+  const statePeerId = useAppSelector((state) => state.user.userId);
+  const [peerId, setPeerId] = useState<string>(statePeerId ?? "");
+
   const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
   const remoteVideoRef = useRef<any>(null);
   const currentUserVideoRef = useRef<any>(null);
@@ -22,7 +27,8 @@ function VideoCall() {
   useEffect(() => {
     const asyncCallback = async () => {
       const Peer = (await import("peerjs")).default;
-      const peer = new Peer();
+      const genPeerId = generatePeerId(peerId);
+      const peer = new Peer(genPeerId);
 
       peer.on("open", (id) => {
         setPeerId(id);
@@ -72,15 +78,18 @@ function VideoCall() {
 
   return (
     <div className="App">
-      <h1>Current user id is {peerId}</h1>
+      <h1 className="text-2xl font-light">User ID: {peerId}</h1>
       <input
         type="text"
+        className="rounded-md p-2 bg-gray-200 glass focus:outline-none"
         value={remotePeerIdValue}
         onChange={(e) => setRemotePeerIdValue(e.target.value)}
       />
       <button onClick={() => call(remotePeerIdValue)}>Call</button>
       <div>
-        <video className="w-1/2 h-1/2" ref={currentUserVideoRef} />
+        <video
+          ref={currentUserVideoRef}
+        />
       </div>
       <div>
         <video className="w-1/2 h-1/2" ref={remoteVideoRef} />

@@ -7,6 +7,7 @@ import { useAppSelector } from "@src/state";
 import ChatBubble from "@src/components/ChatBubble";
 import ErrorAlert from "@src/components/ErrorAlert";
 import ChatInput from "@src/components/ChatInput";
+import generatePeerId from "@src/utils/generatePeerId";
 
 interface MessageData {
   timestamp: number;
@@ -43,11 +44,6 @@ const Connect = (props: Props) => {
 
     setMessages((messages) => [...messages, data] as MessageData[]);
   }, [connection, message, peerId]);
-
-  const generatePeerId = useCallback((id: null | string) => {
-    if (id && id !== "") return id;
-    return Math.random().toString(36).substring(2, 15);
-  }, []);
 
   useEffect(() => {
     const asyncCallback = async () => {
