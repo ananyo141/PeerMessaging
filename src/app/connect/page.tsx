@@ -14,7 +14,11 @@ type Props = {};
 
 const Connect = (props: Props) => {
   const statePeerId = useAppSelector((state) => state.user.userId);
-  const [peerId, setPeerId] = useState<string>(statePeerId ?? "");
+  const [peerId, setPeerId] = useState<string>(
+    statePeerId && statePeerId !== ""
+      ? statePeerId
+      : Math.random().toString(36).substring(2, 15)
+  );
 
   const [inputId, setInputId] = useState("");
   const [messages, setMessages] = useState<PeerData[]>([]);
@@ -24,9 +28,7 @@ const Connect = (props: Props) => {
   const [connection, setConnection] = useState<any>();
 
   useEffect(() => {
-    console.log("state peer id is", statePeerId);
-    console.log("peer id is", peerId);
-    setPeerId(statePeerId ?? Math.random().toString(36).substring(2, 15));
+    if (statePeerId && statePeerId !== "") setPeerId(statePeerId);
 
     const asyncCallback = async () => {
       const Peer = (await import("peerjs")).default;
