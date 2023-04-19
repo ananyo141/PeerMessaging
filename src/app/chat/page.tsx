@@ -3,6 +3,8 @@
 import { useCallback, useRef, useEffect, useState } from "react";
 
 import { useAppSelector } from "@src/state";
+import ChatBubble from "@src/components/ChatBubble";
+import ErrorAlert from "@src/components/ErrorAlert";
 
 interface MessageData {
   timestamp: number;
@@ -15,6 +17,8 @@ type Props = {};
 const Connect = (props: Props) => {
   const statePeerId = useAppSelector((state) => state.user.userId);
   const [peerId, setPeerId] = useState<string>(statePeerId ?? "");
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [inputId, setInputId] = useState("");
   const [messages, setMessages] = useState<MessageData[]>([]);
@@ -50,6 +54,12 @@ const Connect = (props: Props) => {
 
   return (
     <div className="App">
+      {errorMessage && (
+        <ErrorAlert
+          message={errorMessage}
+          onClick={() => setErrorMessage(null)}
+        />
+      )}
       <h1>Peer ID: {peerId}</h1>
       <h2>Messages</h2>
       <input
@@ -74,12 +84,18 @@ const Connect = (props: Props) => {
       />
       <button
         onClick={() => {
-          if (!connection) return;
-          connection.current.send({
+          if (!connection.current) {
+            setErrorMessage("Please connect to a peer first");
+            return;
+          }
+          const data = {
             timestamp: Date.now(),
             username: peerId,
             content: message,
-          });
+          };
+          connection.current.send(data);
+
+          setMessages((messages) => [...messages, data] as MessageData[]);
         }}
       >
         Send
@@ -88,8 +104,12 @@ const Connect = (props: Props) => {
       <ul>
         {messages.map((message, i) => (
           <li key={i}>
-            [{new Date(message.timestamp).toString()}] {message.username}:{" "}
-            {message.content}
+            <ChatBubble
+              sender={message.username}
+              message={message.content}
+              self={message.username === peerId}
+              time={new Date(message.timestamp).toString()}
+            />
           </li>
         ))}
       </ul>

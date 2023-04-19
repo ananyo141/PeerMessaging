@@ -46,7 +46,7 @@ export default function App() {
               </div>
               <div className="form-control mt-6">
                 <Link
-                  href={{ pathname: "/connect" }}
+                  href={{ pathname: "/chat" }}
                   className="btn btn-primary"
                   onClick={() => {
                     dispatch(userActions.setUserId(userIdInput ?? ""));
