@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Peer } from "peerjs";
 
 interface Message {
   timestamp: number;
@@ -9,12 +8,10 @@ interface Message {
 
 interface ChatState {
   messages: Message[];
-  peerObject: Peer | null;
 }
 
 const initialState: ChatState = {
   messages: [],
-  peerObject: null,
 };
 
 const chatSlice = createSlice({
@@ -24,15 +21,12 @@ const chatSlice = createSlice({
     addMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push(action.payload);
     },
-    setConnection: (state, action: PayloadAction<Peer>) => {
-      state.peerObject = action.payload;
-    },
     clearChat: (_) => {
       return initialState;
     },
   },
 });
 
-export const { addMessage, setConnection, clearChat } = chatSlice.actions;
+export const { addMessage, clearChat } = chatSlice.actions;
 
 export default chatSlice.reducer;
