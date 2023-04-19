@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface Message {
+export interface Message {
   timestamp: number;
   content: string;
   username: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useRef, useEffect, useState } from "react";
 
 import { useAppSelector } from "@src/state";
 
@@ -20,8 +20,8 @@ const Connect = (props: Props) => {
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [message, setMessage] = useState<string>();
 
-  const [peer, setPeer] = useState<any>();
-  const [connection, setConnection] = useState<any>();
+  const peer = useRef<any>();
+  const connection = useRef<any>();
 
   const generatePeerId = useCallback((id: null | string) => {
     if (id && id !== "") return id;
@@ -34,7 +34,7 @@ const Connect = (props: Props) => {
       const newPeerId = generatePeerId(statePeerId);
       setPeerId(newPeerId);
       const newPeer = new Peer(newPeerId);
-      setPeer(newPeer);
+      peer.current = newPeer;
       newPeer.on("open", (id) => {
         setPeerId(id);
         console.log("Peer ID:", peerId);
@@ -60,8 +60,8 @@ const Connect = (props: Props) => {
       />
       <button
         onClick={() => {
-          const conn = peer?.connect(inputId);
-          setConnection(conn);
+          const conn = peer.current.connect(inputId);
+          connection.current = conn;
         }}
       >
         Connect
@@ -75,10 +75,10 @@ const Connect = (props: Props) => {
       <button
         onClick={() => {
           if (!connection) return;
-          connection.send({
+          connection.current.send({
             timestamp: Date.now(),
-            username: "username",
-            message: message,
+            username: peerId,
+            content: message,
           });
         }}
       >
