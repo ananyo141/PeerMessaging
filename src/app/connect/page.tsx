@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { useAppSelector, useAppDispatch } from "@src/state";
+import { useAppSelector } from "@src/state";
 
-interface PeerData {
+interface MessageData {
   timestamp: number;
-  message: string;
+  content: string;
   username: string;
 }
 
@@ -14,25 +14,26 @@ type Props = {};
 
 const Connect = (props: Props) => {
   const statePeerId = useAppSelector((state) => state.user.userId);
-  const [peerId, setPeerId] = useState<string>(
-    statePeerId && statePeerId !== ""
-      ? statePeerId
-      : Math.random().toString(36).substring(2, 15)
-  );
+  const [peerId, setPeerId] = useState<string>(statePeerId ?? "");
 
   const [inputId, setInputId] = useState("");
-  const [messages, setMessages] = useState<PeerData[]>([]);
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [message, setMessage] = useState<string>();
 
   const [peer, setPeer] = useState<any>();
   const [connection, setConnection] = useState<any>();
 
-  useEffect(() => {
-    if (statePeerId && statePeerId !== "") setPeerId(statePeerId);
+  const generatePeerId = useCallback((id: null | string) => {
+    if (id && id !== "") return id;
+    return Math.random().toString(36).substring(2, 15);
+  }, []);
 
+  useEffect(() => {
     const asyncCallback = async () => {
       const Peer = (await import("peerjs")).default;
-      const newPeer = new Peer(peerId);
+      const newPeerId = generatePeerId(statePeerId);
+      setPeerId(newPeerId);
+      const newPeer = new Peer(newPeerId);
       setPeer(newPeer);
       newPeer.on("open", (id) => {
         setPeerId(id);
@@ -40,7 +41,7 @@ const Connect = (props: Props) => {
       });
       newPeer.on("connection", (conn) => {
         conn.on("data", (data) => {
-          setMessages((messages) => [...messages, data] as PeerData[]);
+          setMessages((messages) => [...messages, data] as MessageData[]);
         });
       });
     };
@@ -88,7 +89,7 @@ const Connect = (props: Props) => {
         {messages.map((message, i) => (
           <li key={i}>
             [{new Date(message.timestamp).toString()}] {message.username}:{" "}
-            {message.message}
+            {message.content}
           </li>
         ))}
       </ul>
