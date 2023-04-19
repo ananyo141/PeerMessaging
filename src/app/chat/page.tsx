@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useEffect, useState } from "react";
+import { Avatar } from "@chakra-ui/react";
 
 import { useAppSelector } from "@src/state";
 import ChatBubble from "@src/components/ChatBubble";
@@ -69,48 +70,69 @@ const Connect = (props: Props) => {
   }, [statePeerId]);
 
   return (
-    <div className="App">
-      {errorMessage && (
-        <ErrorAlert
-          message={errorMessage}
-          onClick={() => setErrorMessage(null)}
-        />
-      )}
-      <h1>Peer ID: {peerId}</h1>
-      <h2>Messages</h2>
-      <input
-        type="text"
-        onChange={(e) => {
-          setInputId(e.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          const conn = peer.current.connect(inputId);
-          connection.current = conn;
-        }}
-      >
-        Connect
-      </button>
-      <ChatInput
-        onSend={sendHandler}
-        inputValue={message ?? ""}
-        onInputChange={(e: any) => {
-          setMessage(e.target.value);
-        }}
-      />
-      <ul>
-        {messages.map((message, i) => (
-          <li key={i}>
-            <ChatBubble
-              sender={message.username}
-              message={message.content}
-              self={message.username === peerId}
-              time={new Date(message.timestamp).toString()}
+    <div className="bg-gray-400 min-h-screen flex flex-col justify-center">
+      <div className="xl:w-3/4 w-full lg:w-5/6 max-w-5xl shadow-xl lg:rounded-xl p-4 bg-gray-200 mx-auto">
+        {errorMessage && (
+          <ErrorAlert
+            className="mb-4"
+            message={errorMessage}
+            onClick={() => setErrorMessage(null)}
+          />
+        )}
+        <div className="w-full flex gap-4 justify-between flex-col items-center md:flex-row">
+          <h1 className="text-2xl font-light">User ID: {peerId}</h1>
+
+          <div>
+            <input
+              type="text"
+              className="rounded-md p-2 bg-gray-200 glass focus:outline-none"
+              onChange={(e) => {
+                setInputId(e.target.value);
+              }}
             />
-          </li>
-        ))}
-      </ul>
+            <button
+              className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => {
+                const conn = peer.current.connect(inputId);
+                connection.current = conn;
+              }}
+            >
+              Connect
+            </button>
+          </div>
+        </div>
+        <div className="h-[80vh] overflow-y-auto overflow-x-hidden">
+          {messages.map((message, i) => {
+            const date = new Date(message.timestamp);
+            const month = date.getMonth() + 1; // Month is zero-indexed, so we add 1
+            const day = date.getDate();
+            const year = date.getFullYear();
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            const formattedDate = `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
+
+            return (
+              <ChatBubble
+                key={`chatmessage-${i}`}
+                sender={message.username}
+                message={message.content}
+                self={message.username === peerId}
+                time={formattedDate}
+              />
+            );
+          })}
+        </div>
+        <div>
+          <ChatInput
+            onSend={sendHandler}
+            inputValue={message ?? ""}
+            onInputChange={(e: any) => {
+              setMessage(e.target.value);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
