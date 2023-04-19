@@ -14,7 +14,7 @@ const ChatBubble = (props: Props) => {
         <time className="text-xs opacity-50">{props.time}</time>
       </div>
       <div className="chat-bubble">{props.message}</div>
-      <div className="chat-footer opacity-50">{props.self ? "Sent" : "Received"} By {props.sender}</div>
+      <div className="chat-footer opacity-50">Sent By {props.sender}</div>
     </div>
   );
 };
