@@ -5,6 +5,7 @@ import { useCallback, useRef, useEffect, useState } from "react";
 import { useAppSelector } from "@src/state";
 import ChatBubble from "@src/components/ChatBubble";
 import ErrorAlert from "@src/components/ErrorAlert";
+import ChatInput from "@src/components/ChatInput";
 
 interface MessageData {
   timestamp: number;
@@ -26,6 +27,21 @@ const Connect = (props: Props) => {
 
   const peer = useRef<any>();
   const connection = useRef<any>();
+
+  const sendHandler = useCallback(() => {
+    if (!connection.current) {
+      setErrorMessage("Please connect to a peer first");
+      return;
+    }
+    const data = {
+      timestamp: Date.now(),
+      username: peerId,
+      content: message,
+    };
+    connection.current.send(data);
+
+    setMessages((messages) => [...messages, data] as MessageData[]);
+  }, [connection, message, peerId]);
 
   const generatePeerId = useCallback((id: null | string) => {
     if (id && id !== "") return id;
@@ -76,31 +92,13 @@ const Connect = (props: Props) => {
       >
         Connect
       </button>
-      <textarea
-        value={message}
-        onChange={(e) => {
+      <ChatInput
+        onSend={sendHandler}
+        inputValue={message ?? ""}
+        onInputChange={(e: any) => {
           setMessage(e.target.value);
         }}
       />
-      <button
-        onClick={() => {
-          if (!connection.current) {
-            setErrorMessage("Please connect to a peer first");
-            return;
-          }
-          const data = {
-            timestamp: Date.now(),
-            username: peerId,
-            content: message,
-          };
-          connection.current.send(data);
-
-          setMessages((messages) => [...messages, data] as MessageData[]);
-        }}
-      >
-        Send
-      </button>
-
       <ul>
         {messages.map((message, i) => (
           <li key={i}>
