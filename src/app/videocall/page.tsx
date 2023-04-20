@@ -77,27 +77,33 @@ function VideoCall() {
   };
 
   return (
-      <div>
-    <div className="container max-w-5xl mx-auto p-4">
-      <div className="flex justify-between gap-4 items-center">
-      <h1 className="text-2xl font-light">User ID: {peerId}</h1>
+    <div className="bg-gray-400 min-h-screen flex flex-col justify-center">
+      <div className="bg-gray-100 rounded-xl container max-w-5xl mx-auto p-4">
+        <div className="flex justify-between gap-4 items-center">
+          <h1 className="text-2xl font-light">User ID: {peerId}</h1>
           <div>
-      <input
-        type="text"
-        className="rounded-md p-2 blok bg-gray-200 glass focus:outline-none"
-        value={remotePeerIdValue}
-        onChange={(e) => setRemotePeerIdValue(e.target.value)}
-      />
-      <button 
-            className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => call(remotePeerIdValue)}>Call</button>
+            <input
+              type="text"
+              className="rounded-md p-2 blok bg-gray-200 glass focus:outline-none"
+              value={remotePeerIdValue}
+              onChange={(e) => setRemotePeerIdValue(e.target.value)}
+            />
+            <button
+              className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => call(remotePeerIdValue)}
+            >
+              Call
+            </button>
+          </div>
+        </div>
+        <div className="relative py-3 h-full">
+          <video className="w-full h-[80vh] rounded-lg" ref={remoteVideoRef} />
+          <video
+            className="absolute hidden md:block bottom-0 right-32 rounded-xl z-20 w-1/6 h-1/6"
+            ref={currentUserVideoRef}
+          />
+        </div>
       </div>
-      </div>
-      <div className="relative py-3 h-full">
-        <video className="w-full h-[80vh] rounded-lg" ref={remoteVideoRef} />
-        <video className="absolute hidden md:block bottom-0 right-32 rounded-xl z-20 w-1/6 h-1/6" ref={currentUserVideoRef} />
-      </div>
-    </div>
     </div>
   );
 }
