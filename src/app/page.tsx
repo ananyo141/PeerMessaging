@@ -44,7 +44,7 @@ export default function App() {
                   className="input input-bordered"
                 />
               </div>
-              <div className="form-control mt-6">
+              <div className="form-control space-y-2 mt-6">
                 <Link
                   href={{ pathname: "/chat" }}
                   className="btn btn-primary"
@@ -52,7 +52,16 @@ export default function App() {
                     dispatch(userActions.setUserId(userIdInput ?? ""));
                   }}
                 >
-                  Next
+                  Chat
+                </Link>
+                <Link
+                  href={{ pathname: "/videocall" }}
+                  className="btn btn-primary"
+                  onClick={() => {
+                    dispatch(userActions.setUserId(userIdInput ?? ""));
+                  }}
+                >
+                  Video Call
                 </Link>
               </div>
             </div>
